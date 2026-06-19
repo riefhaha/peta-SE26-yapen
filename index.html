@@ -2,32 +2,32 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Sensus Ekonomi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GASPOL - Sensus Ekonomi 2026</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; }
         #map { width: 100vw; height: 100vh; z-index: 1; }
         
-        #sidebar { position: absolute; left: -320px; top: 0; width: 300px; height: 100%; background: #ffffff; z-index: 3000; transition: 0.3s; padding: 15px; box-shadow: 2px 0 10px rgba(0,0,0,0.15); overflow-y: auto; }
+        #sidebar { position: absolute; left: -320px; top: 0; width: 300px; height: 100%; background: #fff; z-index: 3000; transition: 0.3s; padding: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.15); overflow-y: auto; }
         #sidebar.active { left: 0; }
-        
-        .menu-btn { position: absolute; left: 10px; top: 80px; z-index: 2000; padding: 8px 12px; cursor: pointer; background: white; border: 1px solid #aaa; border-radius: 4px; font-weight: bold; }
-        .close-btn { background: none; border: 1px solid #ccc; padding: 2px 8px; cursor: pointer; float: right; border-radius: 4px; font-size: 14px;}
-        
-        .select-box { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        .sls-item { cursor: pointer; padding: 8px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .header-gaspol { background: #f26522; color: #fff; padding: 25px 15px; text-align: center; }
+        .menu-btn { position: absolute; left: 10px; top: 80px; z-index: 2000; padding: 10px 15px; cursor: pointer; background: white; border: 1px solid #aaa; border-radius: 6px; font-weight: bold; }
+        .close-btn { background: none; border: 1px solid #fff; color: #fff; padding: 5px 10px; cursor: pointer; float: right; border-radius: 4px; }
+        .nav-content { padding: 15px; }
+        .select-box { width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .sls-item { cursor: pointer; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
         .sls-item:hover { background: #f0f8ff; color: #007bff; }
-
-        /* Popup Styling - Dibuat sangat rapat (Compact) */
-        .popup-custom { font-size: 12px; line-height: 1.2; min-width: 180px; }
-        .popup-custom h4 { margin: 0 0 4px 0; border-bottom: 1px solid #ddd; padding-bottom: 2px; color: #333; font-size: 13px; }
-        .popup-custom p { margin: 2px 0; }
-        .badge { padding: 1px 5px; color: white; border-radius: 3px; font-weight: bold; font-size: 11px; }
+        
+        .popup-custom { font-size: 12px; line-height: 0.3; min-width: 200px; }
+        .popup-custom h4 { margin: 0 0 5px 0; border-bottom: 1px solid #ddd; padding-bottom: 3px; font-size: 14px; color: #333; }
+        .badge { padding: 2px 6px; color: white; border-radius: 3px; font-weight: bold; font-size: 11px; }
         .badge-selesai { background-color: #2ecc71; }
         .badge-sedang { background-color: #f39c12; }
         .badge-belum { background-color: #e74c3c; }
-        .highlight-data { background-color: #f8f8f8; padding: 5px; margin-top: 5px; border-radius: 3px; border: 1px solid #eee; }
+        .highlight-data { background-color: #f8f8f8; padding: 6px; margin-top: 6px; border-radius: 3px; border: 1px solid #eee; }
+        .my-tooltip { background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 4px; font-size: 12px; padding: 4px 8px; }
     </style>
 </head>
 <body>
@@ -35,13 +35,27 @@
     <button class="menu-btn" onclick="document.getElementById('sidebar').classList.add('active')">☰ Menu</button>
     
     <div id="sidebar">
-        <button class="close-btn" onclick="document.getElementById('sidebar').classList.remove('active')">Tutup X</button>
-        <h3>Navigasi Wilayah</h3>
-        <label><input type="checkbox" id="chkRT" checked onchange="toggleBatas()"> Tampilkan Batas RT</label>
-        <hr>
-        <select id="selKec" class="select-box" onchange="updateDesa()"><option>Pilih Kecamatan</option></select>
-        <select id="selDesa" class="select-box" onchange="updateSLS()"><option>Pilih Desa</option></select>
-        <div id="sls-list"></div>
+        <div class="header-gaspol">
+            <button class="close-btn" onclick="document.getElementById('sidebar').classList.remove('active')">✕</button>
+            <h1 style="margin:0; font-size: 32px; letter-spacing: 2px;">GASPOL</h1>
+            <div style="font-size: 11px; opacity: 0.9; margin-top: 5px; text-transform: uppercase;">Geospasial Administrasi Sensus dan Pemetaan Ekonomi Online</div>
+        </div>
+        
+        <div class="nav-content">
+            <label><input type="checkbox" id="chkRT" checked onchange="toggleBatas()"> Tampilkan Batas RT</label>
+            <hr>
+            <label><b>Mode Tampilan:</b></label><br>
+            <input type="radio" name="mode" value="outline" checked onchange="updateStyle()"> Outline<br>
+            <input type="radio" name="mode" value="fill" onchange="updateStyle()"> Spasial (Fill Color)
+            <hr>
+            <select id="selKec" class="select-box" onchange="updateDesa()"><option>Pilih Kecamatan</option></select>
+            <select id="selDesa" class="select-box" onchange="updateSLS()"><option>Pilih Desa</option></select>
+            <div id="sls-list"></div>
+        </div>
+
+        <div style="position: absolute; bottom: 20px; width: 100%; text-align: center; font-size: 12px; font-style: italic; color: #7f8c8d;">
+            "Kinerja Terpantau, Ekonomi Terpadu"
+        </div>
     </div>
 
     <div id="map"></div>
@@ -53,75 +67,85 @@
         var map = L.map('map', { zoomControl: true }).setView([-1.88, 136.24], 11);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        var dataGlobal = [];
-        var batasLayer = L.layerGroup().addTo(map);
+        var dataGlobal = [], batasLayer = L.layerGroup().addTo(map), geoLayer;
         var scale = chroma.scale(['#e74c3c', '#f1c40f', '#2ecc71']).domain([0, 50, 100]);
+        var dataCSV = {};
 
-        function toggleBatas() {
-            document.getElementById('chkRT').checked ? map.addLayer(batasLayer) : map.removeLayer(batasLayer);
+        function toggleBatas() { document.getElementById('chkRT').checked ? map.addLayer(batasLayer) : map.removeLayer(batasLayer); }
+
+        function updateStyle() {
+            var mode = document.querySelector('input[name="mode"]:checked').value;
+            geoLayer.setStyle(f => {
+                var p = parseFloat(dataCSV[f.properties.idsubsls?.trim()]?.persentase) || 0;
+                return { color: scale(p).hex(), weight: 1.5, fillColor: scale(p).hex(), fillOpacity: (mode === 'fill' ? 0.6 : 0) };
+            });
         }
 
         Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNSPsEepOj_KK62ezB9shaoB0yEG6vpot1FlxjUxrWl650v5xfvISqn1ZSKpwlN1NS_IUfBvPB2NRZ/pub?gid=0&single=true&output=csv", {
             download: true, header: true, complete: function(results) {
-                var dataCSV = {};
                 results.data.forEach(r => { if(r.idsubsls) dataCSV[r.idsubsls.trim()] = r; });
                 
                 fetch('batas_rt.geojson').then(res => res.json()).then(geo => {
                     dataGlobal = geo.features;
-                    var kecs = [...new Set(geo.features.map(f => f.properties.nmkec))];
-                    kecs.forEach(k => document.getElementById('selKec').innerHTML += `<option>${k}</option>`);
+                    
+                    // Isi Dropdown Kecamatan
+                    var selKec = document.getElementById('selKec');
+                    var kecs = [...new Set(geo.features.map(f => f.properties.nmkec))].sort();
+                    kecs.forEach(k => { if(k) selKec.innerHTML += `<option value="${k}">${k}</option>`; });
 
-                    var geoLayer = L.geoJSON(geo, {
-                        style: f => ({ color: "white", weight: 1.5, fillColor: scale(parseFloat(dataCSV[f.properties.idsubsls.trim()]?.persentase) || 0).hex(), fillOpacity: 0.7 }),
+                    geoLayer = L.geoJSON(geo, {
+                        style: f => ({ color: scale(parseFloat(dataCSV[f.properties.idsubsls?.trim()]?.persentase) || 0).hex(), weight: 1.5, fillOpacity: 0 }),
                         onEachFeature: (f, l) => {
-                            var id = f.properties.idsubsls.trim();
-                            var info = dataCSV[id];
-                            var status = info?.status || 'Belum';
-                            var bClass = status === 'Selesai' ? 'badge-selesai' : status === 'Sedang' ? 'badge-sedang' : 'badge-belum';
-                            
-                            l.bindPopup(`
-                                <div class="popup-custom">
-                                    <h4>${f.properties.nmdesa} - SLS ${f.properties.nmsls}</h4>
-                                    <p><b>ID SLS:</b> ${id}</p>
-                                    <p><b>Petugas:</b> ${info?.petugas || '-'}</p>
-                                    <p><b>Status:</b> <span class="badge ${bClass}">${status}</span></p>
-                                    <div class="highlight-data">
-                                        <p><b>Target:</b> ${info?.target_prelist || '-'} KK</p>
-                                        <p><b>Realisasi:</b> ${info?.realisasi || 0} KK</p>
-                                        <p><b>Progres:</b> ${info?.persentase || '0%'}</p>
-                                    </div>
-                                </div>`);
-                            
-                            l.on({
-                                mouseover: (e) => { e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 0.9 }).bringToFront(); },
-                                mouseout: (e) => { geoLayer.resetStyle(e.target); }
+                            l.bindTooltip(`${f.properties.nmdesa} - ${f.properties.nmsls}`, { className: 'my-tooltip', sticky: true });
+                            l.on('click', (e) => {
+                                L.DomEvent.stopPropagation(e);
+                                geoLayer.resetStyle();
+                                var id = f.properties.idsubsls?.trim();
+                                var info = dataCSV[id];
+                                var status = info?.status || 'Belum';
+                                var bClass = status === 'Selesai' ? 'badge-selesai' : status === 'Sedang' ? 'badge-sedang' : 'badge-belum';
+                                
+                                l.bindPopup(`
+                                    <div class="popup-custom">
+                                        <h4>${f.properties.nmdesa} - SLS ${f.properties.nmsls}</h4>
+                                        <p><b>ID SLS:</b> ${id}</p>
+                                        <p><b>Petugas:</b> ${info?.petugas || '-'}</p>
+                                        <p><b>Status:</b> <span class="badge ${bClass}">${status}</span></p>
+                                        <div class="highlight-data">
+                                            <p><b>Target:</b> ${info?.target_prelist || '-'} KK</p>
+                                            <p><b>Realisasi:</b> ${info?.realisasi || 0} KK</p>
+                                            <p><b>Progres:</b> ${info?.persentase || '0%'}</p>
+                                        </div>
+                                    </div>`).openPopup();
+                                e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 0.7 }).bringToFront();
                             });
                         }
                     }).addTo(batasLayer);
-                    map.on('zoomend', () => { geoLayer.resetStyle(); });
                 });
             }
         });
 
-        function updateDesa() {
-            var kec = document.getElementById('selKec').value;
-            var desa = [...new Set(dataGlobal.filter(f => f.properties.nmkec == kec).map(f => f.properties.nmdesa))];
-            var sel = document.getElementById('selDesa');
-            sel.innerHTML = '<option>Pilih Desa</option>';
-            desa.forEach(d => sel.innerHTML += `<option>${d}</option>`);
-        }
+        map.on('click', () => { geoLayer.resetStyle(); });
 
-        function updateSLS() {
-            var desa = document.getElementById('selDesa').value;
-            var list = document.getElementById('sls-list');
-            list.innerHTML = '';
-            dataGlobal.filter(f => f.properties.nmdesa == desa).forEach(f => {
-                var div = document.createElement('div');
-                div.className = 'sls-item';
-                div.innerHTML = f.properties.nmsls;
-                div.onclick = () => { map.fitBounds(L.geoJSON(f).getBounds()); document.getElementById('sidebar').classList.remove('active'); };
-                list.appendChild(div);
-            });
+        function updateDesa() { 
+            var kec = document.getElementById('selKec').value; 
+            var desa = [...new Set(dataGlobal.filter(f => f.properties.nmkec == kec).map(f => f.properties.nmdesa))].sort(); 
+            var sel = document.getElementById('selDesa'); 
+            sel.innerHTML = '<option>Pilih Desa</option>'; 
+            desa.forEach(d => { if(d) sel.innerHTML += `<option value="${d}">${d}</option>`; }); 
+        }
+        
+        function updateSLS() { 
+            var desa = document.getElementById('selDesa').value; 
+            var list = document.getElementById('sls-list'); 
+            list.innerHTML = ''; 
+            dataGlobal.filter(f => f.properties.nmdesa == desa).forEach(f => { 
+                var div = document.createElement('div'); 
+                div.className = 'sls-item'; 
+                div.innerHTML = f.properties.nmsls; 
+                div.onclick = () => { map.fitBounds(L.geoJSON(f).getBounds()); document.getElementById('sidebar').classList.remove('active'); }; 
+                list.appendChild(div); 
+            }); 
         }
     </script>
 </body>
