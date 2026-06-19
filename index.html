@@ -2,28 +2,47 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Sensus - Monitoring RT</title>
-    
+    <title>Dashboard Sensus Ekonomi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
     <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        #map { width: 100vw; height: 100vh; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        #map { width: 100vw; height: 100vh; z-index: 1; }
         
-        .popup-custom { font-size: 14px; }
-        .popup-custom h4 { margin: 0 0 5px 0; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        .popup-custom p { margin: 4px 0; }
+        #sidebar { position: absolute; left: -320px; top: 0; width: 300px; height: 100%; background: #ffffff; z-index: 3000; transition: 0.3s; padding: 15px; box-shadow: 2px 0 10px rgba(0,0,0,0.15); overflow-y: auto; }
+        #sidebar.active { left: 0; }
         
-        .badge { padding: 3px 6px; color: white; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .menu-btn { position: absolute; left: 10px; top: 80px; z-index: 2000; padding: 8px 12px; cursor: pointer; background: white; border: 1px solid #aaa; border-radius: 4px; font-weight: bold; }
+        .close-btn { background: none; border: 1px solid #ccc; padding: 2px 8px; cursor: pointer; float: right; border-radius: 4px; font-size: 14px;}
+        
+        .select-box { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .sls-item { cursor: pointer; padding: 8px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .sls-item:hover { background: #f0f8ff; color: #007bff; }
+
+        /* Popup Styling - Dibuat sangat rapat (Compact) */
+        .popup-custom { font-size: 12px; line-height: 1.2; min-width: 180px; }
+        .popup-custom h4 { margin: 0 0 4px 0; border-bottom: 1px solid #ddd; padding-bottom: 2px; color: #333; font-size: 13px; }
+        .popup-custom p { margin: 2px 0; }
+        .badge { padding: 1px 5px; color: white; border-radius: 3px; font-weight: bold; font-size: 11px; }
         .badge-selesai { background-color: #2ecc71; }
-        .badge-sedang { background-color: #F26522; }
+        .badge-sedang { background-color: #f39c12; }
         .badge-belum { background-color: #e74c3c; }
-        
-        .highlight-data { background-color: #f1f2f6; padding: 4px; border-radius: 4px; border: 1px solid #dcdde1; margin-top: 5px;}
+        .highlight-data { background-color: #f8f8f8; padding: 5px; margin-top: 5px; border-radius: 3px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
+
+    <button class="menu-btn" onclick="document.getElementById('sidebar').classList.add('active')">☰ Menu</button>
+    
+    <div id="sidebar">
+        <button class="close-btn" onclick="document.getElementById('sidebar').classList.remove('active')">Tutup X</button>
+        <h3>Navigasi Wilayah</h3>
+        <label><input type="checkbox" id="chkRT" checked onchange="toggleBatas()"> Tampilkan Batas RT</label>
+        <hr>
+        <select id="selKec" class="select-box" onchange="updateDesa()"><option>Pilih Kecamatan</option></select>
+        <select id="selDesa" class="select-box" onchange="updateSLS()"><option>Pilih Desa</option></select>
+        <div id="sls-list"></div>
+    </div>
 
     <div id="map"></div>
 
@@ -31,116 +50,79 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <script>
-        var map = L.map('map').setView([-1.88, 136.24], 9);
+        var map = L.map('map', { zoomControl: true }).setView([-1.88, 136.24], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
+        var dataGlobal = [];
+        var batasLayer = L.layerGroup().addTo(map);
+        var scale = chroma.scale(['#e74c3c', '#f1c40f', '#2ecc71']).domain([0, 50, 100]);
 
-        function getColor(status) {
-            var cleanStatus = status ? String(status).trim() : '';
-            if (cleanStatus === 'Selesai') return '#2ecc71';
-            if (cleanStatus === 'Sedang') return '#F26522';
-            if (cleanStatus === 'Belum') return '#e74c3c';
-            return '#95a5a6'; 
+        function toggleBatas() {
+            document.getElementById('chkRT').checked ? map.addLayer(batasLayer) : map.removeLayer(batasLayer);
         }
 
-        // Tautan Google Sheets Anda yang sudah ditanamkan langsung
-        var linkGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNSPsEepOj_KK62ezB9shaoB0yEG6vpot1FlxjUxrWl650v5xfvISqn1ZSKpwlN1NS_IUfBvPB2NRZ/pub?gid=0&single=true&output=csv";
-        var linkAntiCache = linkGoogleSheets + "&nocache=" + new Date().getTime();
-
-        Papa.parse(linkAntiCache, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                
+        Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNSPsEepOj_KK62ezB9shaoB0yEG6vpot1FlxjUxrWl650v5xfvISqn1ZSKpwlN1NS_IUfBvPB2NRZ/pub?gid=0&single=true&output=csv", {
+            download: true, header: true, complete: function(results) {
                 var dataCSV = {};
-                results.data.forEach(function(row) {
-                    var kunciCSV = row.idsubsls || row.idsls; 
-                    if (kunciCSV) {
-                        dataCSV[String(kunciCSV).trim()] = row; 
-                    }
-                });
+                results.data.forEach(r => { if(r.idsubsls) dataCSV[r.idsubsls.trim()] = r; });
+                
+                fetch('batas_rt.geojson').then(res => res.json()).then(geo => {
+                    dataGlobal = geo.features;
+                    var kecs = [...new Set(geo.features.map(f => f.properties.nmkec))];
+                    kecs.forEach(k => document.getElementById('selKec').innerHTML += `<option>${k}</option>`);
 
-                fetch('batas_rt.geojson') 
-                    .then(response => response.json())
-                    .then(data => {
-                        
-                        var geojsonLayer = L.geoJSON(data, {
-                            style: function (feature) {
-                                var idPeta = feature.properties.idsubsls || feature.properties.idsls;
-                                idPeta = String(idPeta).trim();
-                                
-                                var status_lapangan = dataCSV[idPeta] ? dataCSV[idPeta].status : 'Tidak Ada Data';
-                                
-                                return {
-                                    color: "white",
-                                    weight: 1.5,
-                                    fillColor: getColor(status_lapangan),
-                                    fillOpacity: 0.7
-                                };
-                            },
+                    var geoLayer = L.geoJSON(geo, {
+                        style: f => ({ color: "white", weight: 1.5, fillColor: scale(parseFloat(dataCSV[f.properties.idsubsls.trim()]?.persentase) || 0).hex(), fillOpacity: 0.7 }),
+                        onEachFeature: (f, l) => {
+                            var id = f.properties.idsubsls.trim();
+                            var info = dataCSV[id];
+                            var status = info?.status || 'Belum';
+                            var bClass = status === 'Selesai' ? 'badge-selesai' : status === 'Sedang' ? 'badge-sedang' : 'badge-belum';
                             
-                            onEachFeature: function (feature, layer) {
-                                var idPeta = feature.properties.idsubsls || feature.properties.idsls;
-                                idPeta = String(idPeta).trim();
-                                var infoCSV = dataCSV[idPeta];
-
-                                var nama_desa = feature.properties.nmdesa || '-';
-                                var nama_sls = feature.properties.nmsls || idPeta;
-
-                                var status = infoCSV ? infoCSV.status : 'Belum Terdata';
-                                var petugas = infoCSV ? infoCSV.petugas : '-';
-                                
-                                var target = infoCSV ? infoCSV.target_prelist : '0';
-                                var realisasi = infoCSV ? infoCSV.realisasi : '0';
-                                var persentase = infoCSV ? infoCSV.persentase : '0%';
-
-                                var cleanStatus = status ? String(status).trim() : '';
-                                var badgeClass = cleanStatus === 'Selesai' ? 'badge-selesai' : 
-                                                 cleanStatus === 'Sedang' ? 'badge-sedang' : 
-                                                 cleanStatus === 'Belum' ? 'badge-belum' : '';
-
-                                var popupContent = `
-                                    <div class="popup-custom">
-                                        <h4>Desa ${nama_desa} - SLS ${nama_sls}</h4>
-                                        <p><b>ID SLS:</b> ${idPeta}</p>
-                                        <p><b>Petugas:</b> ${petugas}</p>
-                                        <p><b>Status:</b> <span class="badge ${badgeClass}">${status}</span></p>
-                                        <div class="highlight-data">
-                                            <p><b>Target:</b> ${target} KK</p>
-                                            <p><b>Realisasi:</b> ${realisasi} KK</p>
-                                            <p><b>Progres:</b> ${persentase}</p>
-                                        </div>
+                            l.bindPopup(`
+                                <div class="popup-custom">
+                                    <h4>${f.properties.nmdesa} - SLS ${f.properties.nmsls}</h4>
+                                    <p><b>ID SLS:</b> ${id}</p>
+                                    <p><b>Petugas:</b> ${info?.petugas || '-'}</p>
+                                    <p><b>Status:</b> <span class="badge ${bClass}">${status}</span></p>
+                                    <div class="highlight-data">
+                                        <p><b>Target:</b> ${info?.target_prelist || '-'} KK</p>
+                                        <p><b>Realisasi:</b> ${info?.realisasi || 0} KK</p>
+                                        <p><b>Progres:</b> ${info?.persentase || '0%'}</p>
                                     </div>
-                                `;
-                                
-                                layer.bindPopup(popupContent);
-
-                                layer.on({
-                                    mouseover: function (e) {
-                                        var targetLayer = e.target;
-                                        targetLayer.setStyle({
-                                            weight: 3,
-                                            color: '#333',
-                                            fillOpacity: 0.9
-                                        });
-                                        targetLayer.bringToFront();
-                                    },
-                                    mouseout: function (e) {
-                                        geojsonLayer.resetStyle(e.target);
-                                    }
-                                });
-                            }
-                        }).addTo(map);
-
-                        map.fitBounds(geojsonLayer.getBounds());
-                    })
-                    .catch(error => console.error('Error memuat GeoJSON:', error));
+                                </div>`);
+                            
+                            l.on({
+                                mouseover: (e) => { e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 0.9 }).bringToFront(); },
+                                mouseout: (e) => { geoLayer.resetStyle(e.target); }
+                            });
+                        }
+                    }).addTo(batasLayer);
+                    map.on('zoomend', () => { geoLayer.resetStyle(); });
+                });
             }
         });
+
+        function updateDesa() {
+            var kec = document.getElementById('selKec').value;
+            var desa = [...new Set(dataGlobal.filter(f => f.properties.nmkec == kec).map(f => f.properties.nmdesa))];
+            var sel = document.getElementById('selDesa');
+            sel.innerHTML = '<option>Pilih Desa</option>';
+            desa.forEach(d => sel.innerHTML += `<option>${d}</option>`);
+        }
+
+        function updateSLS() {
+            var desa = document.getElementById('selDesa').value;
+            var list = document.getElementById('sls-list');
+            list.innerHTML = '';
+            dataGlobal.filter(f => f.properties.nmdesa == desa).forEach(f => {
+                var div = document.createElement('div');
+                div.className = 'sls-item';
+                div.innerHTML = f.properties.nmsls;
+                div.onclick = () => { map.fitBounds(L.geoJSON(f).getBounds()); document.getElementById('sidebar').classList.remove('active'); };
+                list.appendChild(div);
+            });
+        }
     </script>
 </body>
 </html>
