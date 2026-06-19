@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Sensus - Monitoring RT</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        #map { width: 100vw; height: 100vh; }
+        
+        .popup-custom { font-size: 14px; }
+        .popup-custom h4 { margin: 0 0 5px 0; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        .popup-custom p { margin: 4px 0; }
+        
+        .badge { padding: 3px 6px; color: white; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .badge-selesai { background-color: #2ecc71; }
+        .badge-sedang { background-color: #F26522; }
+        .badge-belum { background-color: #e74c3c; }
+        
+        .highlight-data { background-color: #f1f2f6; padding: 4px; border-radius: 4px; border: 1px solid #dcdde1; margin-top: 5px;}
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script>
+        var map = L.map('map').setView([-1.88, 136.24], 9);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        function getColor(status) {
+            var cleanStatus = status ? String(status).trim() : '';
+            if (cleanStatus === 'Selesai') return '#2ecc71';
+            if (cleanStatus === 'Sedang') return '#F26522';
+            if (cleanStatus === 'Belum') return '#e74c3c';
+            return '#95a5a6'; 
+        }
+
+        // Tautan Google Sheets Anda yang sudah ditanamkan langsung
+        var linkGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNSPsEepOj_KK62ezB9shaoB0yEG6vpot1FlxjUxrWl650v5xfvISqn1ZSKpwlN1NS_IUfBvPB2NRZ/pub?gid=0&single=true&output=csv";
+        var linkAntiCache = linkGoogleSheets + "&nocache=" + new Date().getTime();
+
+        Papa.parse(linkAntiCache, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                
+                var dataCSV = {};
+                results.data.forEach(function(row) {
+                    var kunciCSV = row.idsubsls || row.idsls; 
+                    if (kunciCSV) {
+                        dataCSV[String(kunciCSV).trim()] = row; 
+                    }
+                });
+
+                fetch('batas_rt.geojson') 
+                    .then(response => response.json())
+                    .then(data => {
+                        
+                        var geojsonLayer = L.geoJSON(data, {
+                            style: function (feature) {
+                                var idPeta = feature.properties.idsubsls || feature.properties.idsls;
+                                idPeta = String(idPeta).trim();
+                                
+                                var status_lapangan = dataCSV[idPeta] ? dataCSV[idPeta].status : 'Tidak Ada Data';
+                                
+                                return {
+                                    color: "white",
+                                    weight: 1.5,
+                                    fillColor: getColor(status_lapangan),
+                                    fillOpacity: 0.7
+                                };
+                            },
+                            
+                            onEachFeature: function (feature, layer) {
+                                var idPeta = feature.properties.idsubsls || feature.properties.idsls;
+                                idPeta = String(idPeta).trim();
+                                var infoCSV = dataCSV[idPeta];
+
+                                var nama_desa = feature.properties.nmdesa || '-';
+                                var nama_sls = feature.properties.nmsls || idPeta;
+
+                                var status = infoCSV ? infoCSV.status : 'Belum Terdata';
+                                var petugas = infoCSV ? infoCSV.petugas : '-';
+                                
+                                var target = infoCSV ? infoCSV.target_prelist : '0';
+                                var realisasi = infoCSV ? infoCSV.realisasi : '0';
+                                var persentase = infoCSV ? infoCSV.persentase : '0%';
+
+                                var cleanStatus = status ? String(status).trim() : '';
+                                var badgeClass = cleanStatus === 'Selesai' ? 'badge-selesai' : 
+                                                 cleanStatus === 'Sedang' ? 'badge-sedang' : 
+                                                 cleanStatus === 'Belum' ? 'badge-belum' : '';
+
+                                var popupContent = `
+                                    <div class="popup-custom">
+                                        <h4>Desa ${nama_desa} - SLS ${nama_sls}</h4>
+                                        <p><b>ID SLS:</b> ${idPeta}</p>
+                                        <p><b>Petugas:</b> ${petugas}</p>
+                                        <p><b>Status:</b> <span class="badge ${badgeClass}">${status}</span></p>
+                                        <div class="highlight-data">
+                                            <p><b>Target:</b> ${target} KK</p>
+                                            <p><b>Realisasi:</b> ${realisasi} KK</p>
+                                            <p><b>Progres:</b> ${persentase}</p>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                layer.bindPopup(popupContent);
+
+                                layer.on({
+                                    mouseover: function (e) {
+                                        var targetLayer = e.target;
+                                        targetLayer.setStyle({
+                                            weight: 3,
+                                            color: '#333',
+                                            fillOpacity: 0.9
+                                        });
+                                        targetLayer.bringToFront();
+                                    },
+                                    mouseout: function (e) {
+                                        geojsonLayer.resetStyle(e.target);
+                                    }
+                                });
+                            }
+                        }).addTo(map);
+
+                        map.fitBounds(geojsonLayer.getBounds());
+                    })
+                    .catch(error => console.error('Error memuat GeoJSON:', error));
+            }
+        });
+    </script>
+</body>
+</html>
