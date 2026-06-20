@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GASPOL - Sensus Ekonomi 2026</title>
     
+    <link rel="icon" type="image/png" href="gaspol.png">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.css" />
     
@@ -22,6 +24,9 @@
         #sidebar.active { transform: translateX(320px); }
         .header-gaspol { background: #f26522; color: #fff; padding: 45px 15px 20px 15px; text-align: center; position: relative; }
         
+        /* LOGO CROP LINGKARAN */
+        .logo-gaspol { width: 75px; height: 75px; object-fit: cover; object-position: center; border-radius: 50%; border: 3px solid #fff; margin: 0 auto 10px auto; display: block; box-shadow: 0 3px 6px rgba(0,0,0,0.2); background: white; }
+        
         /* SIDEBAR KANAN */
         #right-sidebar { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: #fff; z-index: 4000; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: -2px 0 10px rgba(0,0,0,0.15); overflow-x: hidden; overflow-y: auto; }
         #right-sidebar.active { right: 0; }
@@ -32,7 +37,7 @@
         #panel-dashboard, #panel-form { transition: opacity 0.3s ease; width: 100%; padding: 15px; box-sizing: border-box; }
         #panel-form { display: none; opacity: 0; }
 
-        /* TOMBOL KONTROL & NAVIGASI */
+        /* KONTROL PANEL (BAWAH TENGAH) */
         .close-btn { position: absolute; top: 40px; right: 15px; background: rgba(0,0,0,0.2); border: none; color: #fff; padding: 5px 10px; cursor: pointer; border-radius: 4px; z-index: 10; font-weight: bold; }
         .close-btn.left { right: auto; left: 15px; }
         .menu-btn { position: absolute; left: 10px; top: 50px; z-index: 2000; padding: 10px 15px; cursor: pointer; background: white; border: 1px solid #aaa; border-radius: 6px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -46,14 +51,16 @@
         .btn-action { width: 100%; padding: 12px; margin-top: 15px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .btn-cancel { background: #e74c3c; margin-top: 10px; }
 
-        /* UI FORMS & DASHBOARD */
+        /* FORM CONTROLS */
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #555; }
         .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         .nav-content { padding: 15px; }
         .select-box { width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .sls-item { cursor: pointer; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .sls-item:hover { background: #f0f8ff; color: #007bff; }
         
-        /* POPUP CSS (DIKUNCI RAPAT) */
+        /* POPUP CSS RAPAT PAKSA */
         .popup-custom { font-size: 12px !important; line-height: 1.0 !important; min-width: 185px; }
         .popup-custom h4 { margin: 0 0 4px 0 !important; border-bottom: 1px solid #ddd; padding-bottom: 2px !important; font-size: 13px !important; color: #333; }
         .popup-custom p { margin: 1px 0 !important; padding: 0 !important; }
@@ -63,12 +70,12 @@
         .badge-belum { background-color: #e74c3c; }
         .highlight-data { background-color: #f8f8f8; padding: 4px 6px !important; margin-top: 4px !important; border-radius: 3px; border: 1px solid #eee; }
         
-        /* LABEL INFOGRAFIS (Tengah Poligon) */
+        /* INFOGRAFIS LABEL */
         .custom-div-icon { background: transparent; border: none; }
-        .infografis-label { background: rgba(255,255,255,0.95); border: 1px solid #f26522; font-weight: bold; font-size: 11px; padding: 4px 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.3); border-radius: 4px; color: #333; text-align: center; white-space: nowrap; transform: translate(-50%, -50%); display: inline-block; pointer-events: none;}
+        .infografis-label { background: rgba(255,255,255,0.95); border: 1px solid #f26522; font-weight: bold; font-size: 11px; padding: 4px 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.3); border-radius: 4px; color: #333; text-align: center; white-space: nowrap; transform: translate(-50%, -50%); display: inline-block;}
         .my-tooltip { background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 4px; font-size: 12px; padding: 4px 8px; pointer-events: none;}
 
-        /* CSS TREE DASHBOARD */
+        /* ACCORDION TREE TABLE DASHBOARD */
         .dashboard-tree details { margin-bottom: 5px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; }
         .dashboard-tree summary { padding: 10px; cursor: pointer; font-size: 13px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .dashboard-tree summary::-webkit-details-marker { display: none; }
@@ -92,6 +99,7 @@
     <div id="sidebar">
         <div class="header-gaspol">
             <button class="close-btn" onclick="document.getElementById('sidebar').classList.remove('active')">✕</button>
+            <img src="gaspol.png" alt="Logo GASPOL" class="logo-gaspol">
             <h1 style="margin:0; font-size: 32px; letter-spacing: 2px;">GASPOL</h1>
             <div style="font-size: 11px; opacity: 0.9; margin-top: 5px; text-transform: uppercase;">Geospasial Administrasi Sensus dan Pemetaan Ekonomi Online</div>
         </div>
@@ -106,6 +114,11 @@
             <hr>
             <select id="selKec" class="select-box" onchange="onDropdownChange('kec')"><option value="">Pilih Kecamatan</option></select>
             <select id="selDesa" class="select-box" onchange="onDropdownChange('desa')"><option value="">Pilih Desa</option></select>
+            <div id="sls-list"></div>
+        </div>
+
+        <div style="position: absolute; bottom: 20px; width: 100%; text-align: center; font-size: 12px; font-style: italic; color: #7f8c8d;">
+            "Kinerja Terpantau, Ekonomi Terpadu"
         </div>
     </div>
 
@@ -118,10 +131,10 @@
         
         <div id="panel-dashboard">
             <div class="highlight-data" style="padding: 10px !important; margin-bottom: 15px !important;">
-                <h4 style="margin-top:0;">Ringkasan Kabupaten</h4>
-                <p><b>Target Total:</b> <span id="g-target">0</span> KK</p>
-                <p><b>Realisasi:</b> <span id="g-real">0</span> KK</p>
-                <p><b>Rata-rata Progres:</b> <span id="g-prog" class="badge badge-belum">0%</span></p>
+                <h4 style="margin-top:0;">Ringkasan Regional</h4>
+                <p><b>Target Total:</b> <span id="g-target">0</span> Resp</p>
+                <p><b>Realisasi:</b> <span id="g-real">0</span> Resp</p>
+                <p><b>Rata-rata Progres:</b> <span id="g-prog" class="badge badge-belum">0.0%</span></p>
             </div>
             
             <div id="dashboard-tree-container"></div>
@@ -138,15 +151,15 @@
                 <select id="form-desa" class="form-control" onchange="syncForm('desa')"><option value="">Pilih Desa</option></select>
             </div>
             <div class="form-group">
-                <label>SLS / Wilayah</label>
+                <label>SLS / Wilayah Target</label>
                 <select id="form-sls" class="form-control"><option value="">Pilih SLS</option></select>
             </div>
             <div class="form-group">
-                <label>Jumlah KK Selesai</label>
+                <label>Jumlah Responden Selesai</label>
                 <input type="number" class="form-control" placeholder="Contoh: 45">
             </div>
             <div class="form-group">
-                <label>Status</label>
+                <label>Status Eksekusi Lapangan</label>
                 <select class="form-control"><option>Selesai</option><option>Sedang</option><option>Belum</option></select>
             </div>
             <button class="btn-action" onclick="saveData()">💾 Simpan Progres</button>
@@ -157,7 +170,7 @@
     <div id="map"></div>
     
     <script>
-        // INISIALISASI PETA
+        // INISIALISASI PETA DASAR
         var map = L.map('map', { zoomControl: false }).setView([-1.88, 136.24], 11);
         var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         L.tileLayer(osmUrl).addTo(map);
@@ -166,26 +179,27 @@
         var miniMapLayer = L.tileLayer(osmUrl, {minZoom: 0, maxZoom: 13});
         new L.Control.MiniMap(miniMapLayer, { toggleDisplay: true, minimized: isMobile, position: 'bottomright' }).addTo(map);
 
-        // VARIABEL GLOBAL
+        // INSTANCE DATA SPASIAL GLOBAL
         var dataGlobal = [], batasLayer = L.layerGroup().addTo(map), geoLayer;
-        var infoLabels = L.layerGroup().addTo(map); // Layer khusus untuk label centroid
+        var infoLabels = L.layerGroup().addTo(map); 
         var scale = chroma.scale(['#e74c3c', '#f1c40f', '#2ecc71']).domain([0, 50, 100]);
         var dataCSV = {};
         
         var aggrKec = {}, aggrDesa = {};
         var aggrBoundsKec = {}, aggrBoundsDesa = {};
 
-        // FUNGSI ANIMASI SIDEBAR KANAN
+        // DRAWER CONTROL ANIMASI
         var rightSidebar = document.getElementById('right-sidebar');
         function openDashboard() { rightSidebar.classList.add('active'); }
         function closeDashboard() { rightSidebar.classList.remove('active'); collapseToDashboard(); }
+        
         function expandToForm() { 
             rightSidebar.classList.add('expanded'); 
             document.getElementById('header-kanan').classList.add('form-mode'); 
             document.getElementById('panel-dashboard').style.display = 'none'; 
             document.getElementById('panel-form').style.display = 'block'; 
             setTimeout(()=>document.getElementById('panel-form').style.opacity = 1, 50);
-            syncForm('init'); // Isi form sesuai dropdown di sidebar kiri
+            syncForm('init'); 
         }
         function collapseToDashboard() { 
             rightSidebar.classList.remove('expanded'); 
@@ -194,9 +208,8 @@
             document.getElementById('panel-form').style.opacity = 0; 
             document.getElementById('panel-dashboard').style.display = 'block'; 
         }
-        function saveData() { alert("Skrip siap disambungkan ke Google Sheets!"); collapseToDashboard(); }
 
-        // FUNGSI AGREGASI & DASHBOARD TREE
+        // AKUMULASI PENGHITUNGAN AGREGAT BERTINGKAT
         function calculateAggregates() {
             aggrKec = {}; aggrDesa = {}; aggrBoundsKec = {}; aggrBoundsDesa = {};
             
@@ -206,18 +219,17 @@
                 var desa = f.properties.nmdesa;
                 var id = f.properties.idsubsls?.trim();
                 var csv = dataCSV[id] || {};
+                
                 var target = parseFloat(csv.target_prelist) || 0;
                 var real = parseFloat(csv.realisasi) || 0;
                 var p = parseFloat(csv.persentase) || 0;
 
-                // Bounds untuk peletakan Label
                 if(!aggrBoundsKec[kec]) aggrBoundsKec[kec] = L.latLngBounds();
                 aggrBoundsKec[kec].extend(l.getBounds());
                 var key = kec + "||" + desa;
                 if(!aggrBoundsDesa[key]) aggrBoundsDesa[key] = L.latLngBounds();
                 aggrBoundsDesa[key].extend(l.getBounds());
 
-                // Angka
                 if (!aggrKec[kec]) aggrKec[kec] = { desas: new Set(), target: 0, realisasi: 0, totalP: 0, count: 0 };
                 aggrKec[kec].desas.add(desa); aggrKec[kec].target += target; aggrKec[kec].realisasi += real; aggrKec[kec].totalP += p; aggrKec[kec].count++;
 
@@ -232,27 +244,31 @@
             var gTgt = 0, gReal = 0, gP = 0, gCount = 0;
             
             for(var k in aggrKec) { gTgt += aggrKec[k].target; gReal += aggrKec[k].realisasi; gP += aggrKec[k].totalP; gCount += aggrKec[k].count; }
-            var gAvg = gCount > 0 ? Math.round(gP/gCount) : 0;
-            document.getElementById('g-target').innerText = gTgt;
-            document.getElementById('g-real').innerText = gReal;
+            var rawGAvg = gCount > 0 ? (gP/gCount) : 0;
+            var displayGAvg = rawGAvg.toFixed(1);
+            
+            document.getElementById('g-target').innerText = gTgt.toLocaleString('id-ID');
+            document.getElementById('g-real').innerText = gReal.toLocaleString('id-ID');
             var elProg = document.getElementById('g-prog');
-            elProg.innerText = gAvg + '%';
-            elProg.className = `badge badge-${gAvg===100?'selesai':gAvg>0?'sedang':'belum'}`;
+            elProg.innerText = displayGAvg + '%';
+            elProg.className = `badge badge-${rawGAvg>=100?'selesai':rawGAvg>0?'sedang':'belum'}`;
 
             for(var k in aggrKec) {
-                var kAvg = Math.round(aggrKec[k].totalP / aggrKec[k].count);
-                html += `<details><summary><b>${k}</b> <span class="badge badge-${kAvg===100?'selesai':kAvg>0?'sedang':'belum'}">${kAvg}%</span><div class="tree-stats">T: ${aggrKec[k].target} | R: ${aggrKec[k].realisasi}</div></summary><div class="tree-content">`;
+                var rawKAvg = (aggrKec[k].totalP / aggrKec[k].count);
+                var displayKAvg = rawKAvg.toFixed(1);
+                html += `<details><summary><b>${k}</b> <span class="badge badge-${rawKAvg>=100?'selesai':rawKAvg>0?'sedang':'belum'}">${displayKAvg}%</span><div class="tree-stats">T: ${aggrKec[k].target} | R: ${aggrKec[k].realisasi}</div></summary><div class="tree-content">`;
                 
                 var desas = Array.from(aggrKec[k].desas).sort();
                 for(var d of desas) {
                     var key = k + "||" + d;
-                    var dAvg = Math.round(aggrDesa[key].totalP / aggrDesa[key].slsCount);
-                    html += `<details><summary>${d} <span class="badge badge-${dAvg===100?'selesai':dAvg>0?'sedang':'belum'}">${dAvg}%</span><div class="tree-stats">T: ${aggrDesa[key].target} | R: ${aggrDesa[key].realisasi}</div></summary><div class="tree-content">`;
+                    var rawDAvg = (aggrDesa[key].totalP / aggrDesa[key].slsCount);
+                    var displayDAvg = rawDAvg.toFixed(1);
+                    html += `<details><summary>${d} <span class="badge badge-${rawDAvg>=100?'selesai':rawDAvg>0?'sedang':'belum'}">${displayDAvg}%</span><div class="tree-stats">T: ${aggrDesa[key].target} | R: ${aggrDesa[key].realisasi}</div></summary><div class="tree-content">`;
                     
                     dataGlobal.filter(f => f.properties.nmkec === k && f.properties.nmdesa === d).forEach(f => {
                         var id = f.properties.idsubsls?.trim();
-                        var p = parseFloat(dataCSV[id]?.persentase) || 0;
-                        html += `<div class="tree-item">- ${f.properties.nmsls} (T:${dataCSV[id]?.target_prelist||0} | R:${dataCSV[id]?.realisasi||0} | <b>${p}%</b>)</div>`;
+                        var pStr = (parseFloat(dataCSV[id]?.persentase) || 0).toFixed(1);
+                        html += `<div class="tree-item">- ${f.properties.nmsls} (T:${dataCSV[id]?.target_prelist||0} | R:${dataCSV[id]?.realisasi||0} | <b>${pStr}%</b>)</div>`;
                     });
                     html += `</div></details>`;
                 }
@@ -262,7 +278,6 @@
             document.getElementById('dashboard-tree-container').innerHTML = html;
         }
 
-        // KONTROL PETA & RENDER LABEL
         function getActiveLevel() {
             if (document.getElementById('forceSLS').checked) return 'sls';
             if (document.getElementById('selDesa').value !== "") return 'sls';
@@ -270,6 +285,7 @@
             return 'kecamatan';
         }
 
+        // --- SISTEM DECLUTTERING (ANTI-KOLISI LABEL VISUAL DENGAN TOLERANSI LEBIH LEBAR) ---
         function renderLabels() {
             infoLabels.clearLayers();
             var mode = document.querySelector('input[name="mode"]:checked').value;
@@ -279,42 +295,54 @@
             var selKec = document.getElementById('selKec').value;
             var bounds = map.getBounds();
 
+            var occupiedBoxes = [];
+            var W = 110; 
+            var H = 45;  
+
+            function checkAddLabel(center, html) {
+                if (!bounds.contains(center)) return;
+                var pt = map.latLngToContainerPoint(center);
+                var overlap = false;
+                for (var i = 0; i < occupiedBoxes.length; i++) {
+                    if (Math.abs(pt.x - occupiedBoxes[i].x) < W && Math.abs(pt.y - occupiedBoxes[i].y) < H) {
+                        overlap = true; break;
+                    }
+                }
+                if (!overlap) {
+                    occupiedBoxes.push(pt);
+                    var icon = L.divIcon({ className: 'custom-div-icon', html: html });
+                    L.marker(center, {icon: icon, interactive: false}).addTo(infoLabels); 
+                }
+            }
+
             if (level === 'kecamatan') {
                 for (var k in aggrKec) {
                     var center = aggrBoundsKec[k].getCenter();
-                    if (bounds.contains(center)) {
-                        var avg = Math.round(aggrKec[k].totalP / aggrKec[k].count);
-                        var icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="infografis-label">${k}<br>${avg}%</div>`});
-                        L.marker(center, {icon: icon}).addTo(infoLabels);
-                    }
+                    var avgStr = (aggrKec[k].totalP / aggrKec[k].count).toFixed(1);
+                    checkAddLabel(center, `<div class="infografis-label">${k}<br>${avgStr}%</div>`);
                 }
             } else if (level === 'desa') {
                 for (var key in aggrDesa) {
                     if (key.startsWith(selKec + "||")) {
                         var center = aggrBoundsDesa[key].getCenter();
-                        if (bounds.contains(center)) {
-                            var desaName = key.split("||")[1];
-                            var avg = Math.round(aggrDesa[key].totalP / aggrDesa[key].slsCount);
-                            var icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="infografis-label">${desaName}<br>${avg}%</div>`});
-                            L.marker(center, {icon: icon}).addTo(infoLabels);
-                        }
+                        var desaName = key.split("||")[1];
+                        var avgStr = (aggrDesa[key].totalP / aggrDesa[key].slsCount).toFixed(1);
+                        checkAddLabel(center, `<div class="infografis-label">${desaName}<br>${avgStr}%</div>`);
                     }
                 }
             } else {
                 geoLayer.eachLayer(l => {
                     var f = l.feature;
                     if(f.properties.nmkec === selKec && f.properties.nmdesa === document.getElementById('selDesa').value) {
-                        if(bounds.intersects(l.getBounds())) {
-                            var p = parseFloat(dataCSV[f.properties.idsubsls?.trim()]?.persentase) || 0;
-                            var icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="infografis-label">${f.properties.nmsls}<br>${p}%</div>`});
-                            L.marker(l.getBounds().getCenter(), {icon: icon}).addTo(infoLabels);
-                        }
+                        var pStr = (parseFloat(dataCSV[f.properties.idsubsls?.trim()]?.persentase) || 0).toFixed(1);
+                        checkAddLabel(l.getBounds().getCenter(), `<div class="infografis-label">${f.properties.nmsls}<br>${pStr}%</div>`);
                     }
                 });
             }
         }
         map.on('moveend zoomend', renderLabels);
 
+        // PENYESUAIAN WARNA GARIS BATAS SPASIAL & TRANSAKSI OPASITAS WILKERSTAT
         function updateStyle() {
             if(!geoLayer) return;
             var mode = document.querySelector('input[name="mode"]:checked').value;
@@ -324,18 +352,33 @@
 
             geoLayer.eachLayer(layer => {
                 var f = layer.feature;
-                var p = 0;
+                var p = 0; 
                 
                 if (level === 'kecamatan') p = aggrKec[f.properties.nmkec] ? (aggrKec[f.properties.nmkec].totalP / aggrKec[f.properties.nmkec].count) : 0;
                 else if (level === 'desa') p = aggrDesa[f.properties.nmkec+"||"+f.properties.nmdesa] ? (aggrDesa[f.properties.nmkec+"||"+f.properties.nmdesa].totalP / aggrDesa[f.properties.nmkec+"||"+f.properties.nmdesa].slsCount) : 0;
                 else p = parseFloat(dataCSV[f.properties.idsubsls?.trim()]?.persentase) || 0;
 
-                var matchKec = (!selKec) || f.properties.nmkec === selKec;
-                var matchDesa = (!selDesa) || f.properties.nmdesa === selDesa;
+                var isKecMatch = (!selKec) || (f.properties.nmkec === selKec);
+                var isDesaMatch = (!selDesa) || (f.properties.nmdesa === selDesa);
 
-                layer.unbindTooltip();
+                var strokeColor = '#bdc3c7'; 
+                var strokeWeight = 0.5;
+                var fillOp = 0.1;
+
                 if (mode === 'infografis') {
-                    layer.setStyle({ color: scale(p).hex(), weight: (matchKec && matchDesa) ? 1.5 : 0.5, fillColor: scale(p).hex(), fillOpacity: (matchKec && matchDesa) ? 0.7 : 0.05 });
+                    if (level === 'kecamatan') {
+                        if (isKecMatch) { fillOp = 0.65; strokeColor = '#27ae60'; strokeWeight = 1.2; }
+                        else { fillOp = 0.05; }
+                    } else if (level === 'desa') {
+                        if (f.properties.nmkec === selKec && isDesaMatch) { fillOp = 0.65; strokeColor = '#e74c3c'; strokeWeight = 1.5; }
+                        else { fillOp = 0.05; }
+                    } else {
+                        if (isKecMatch && isDesaMatch) { fillOp = 0.7; strokeColor = '#7f8c8d'; strokeWeight = 1; }
+                        else { fillOp = 0.05; }
+                    }
+                    
+                    layer.unbindTooltip();
+                    layer.setStyle({ color: strokeColor, weight: strokeWeight, fillColor: scale(p).hex(), fillOpacity: fillOp });
                 } else {
                     layer.setStyle({ color: scale(p).hex(), weight: 1.5, fillOpacity: 0 });
                     layer.bindTooltip(`${f.properties.nmdesa} - ${f.properties.nmsls}`, { className: 'my-tooltip', sticky: true });
@@ -344,7 +387,7 @@
             renderLabels();
         }
 
-        // MEMUAT DATA
+        // FETCHING CORE ENGINE
         Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRNSPsEepOj_KK62ezB9shaoB0yEG6vpot1FlxjUxrWl650v5xfvISqn1ZSKpwlN1NS_IUfBvPB2NRZ/pub?gid=0&single=true&output=csv", {
             download: true, header: true, complete: function(results) {
                 results.data.forEach(r => { if(r.idsubsls) dataCSV[r.idsubsls.trim()] = r; });
@@ -367,26 +410,47 @@
                                 var desa = f.properties.nmdesa;
                                 var level = getActiveLevel();
                                 
-                                // KLIK SINKRONISASI BERTINGKAT
                                 if (level === 'kecamatan') {
                                     document.getElementById('selKec').value = kec;
                                     onDropdownChange('kec');
                                 } else if (level === 'desa') {
                                     if(document.getElementById('selKec').value !== kec) { document.getElementById('selKec').value = kec; onDropdownChange('kec', false); }
-                                    document.getElementById('selDesa').value = desa;
+                                    
+                                    var sDesa = document.getElementById('selDesa');
+                                    sDesa.innerHTML = '<option value="">Pilih Desa</option>';
+                                    [...new Set(dataGlobal.filter(x => x.properties.nmkec == kec).map(x => x.properties.nmdesa))].sort().forEach(d => { sDesa.innerHTML += `<option value="${d}">${d}</option>`; });
+                                    
+                                    sDesa.value = desa;
                                     onDropdownChange('desa');
                                 } else {
-                                    if(document.getElementById('selKec').value !== kec || document.getElementById('selDesa').value !== desa) {
-                                        document.getElementById('selKec').value = kec; onDropdownChange('kec', false);
-                                        document.getElementById('selDesa').value = desa; onDropdownChange('desa', false);
-                                    }
+                                    document.getElementById('selKec').value = kec;
+                                    var sDesa = document.getElementById('selDesa');
+                                    sDesa.innerHTML = '<option value="">Pilih Desa</option>';
+                                    [...new Set(dataGlobal.filter(x => x.properties.nmkec == kec).map(x => x.properties.nmdesa))].sort().forEach(d => { sDesa.innerHTML += `<option value="${d}">${d}</option>`; });
+                                    sDesa.value = desa;
                                     
-                                    // POPUP SLS LEVEL
+                                    var list = document.getElementById('sls-list'); list.innerHTML = '';
+                                    dataGlobal.filter(x => x.properties.nmdesa == desa).forEach(x => {
+                                        var div = document.createElement('div'); div.className = 'sls-item'; div.innerHTML = x.properties.nmsls;
+                                        div.onclick = () => { map.fitBounds(L.geoJSON(x).getBounds(), { animate: false }); document.getElementById('sidebar').classList.remove('active'); };
+                                        list.appendChild(div);
+                                    });
+
                                     var id = f.properties.idsubsls?.trim();
                                     var info = dataCSV[id];
                                     var status = info?.status || 'Belum';
                                     var bClass = status === 'Selesai' ? 'badge-selesai' : status === 'Sedang' ? 'badge-sedang' : 'badge-belum';
+                                    var pStr = (parseFloat(info?.persentase) || 0).toFixed(1);
                                     
+                                    updateStyle();
+
+                                    e.target.setStyle({
+                                        fillColor: '#3498db', 
+                                        fillOpacity: 0.85,
+                                        color: '#2c3e50', 
+                                        weight: 3
+                                    }).bringToFront();
+
                                     l.bindPopup(`
                                         <div class="popup-custom">
                                             <h4>${f.properties.nmdesa} - SLS ${f.properties.nmsls}</h4>
@@ -394,13 +458,11 @@
                                             <p><b>Petugas:</b> ${info?.petugas || '-'}</p>
                                             <p><b>Status:</b> <span class="badge ${bClass}">${status}</span></p>
                                             <div class="highlight-data">
-                                                <p><b>Target:</b> ${info?.target_prelist || '-'} KK</p>
-                                                <p><b>Realisasi:</b> ${info?.realisasi || 0} KK</p>
-                                                <p><b>Progres:</b> ${info?.persentase || '0%'}</p>
+                                                <p><b>Target:</b> ${info?.target_prelist || '-'} Resp</p>
+                                                <p><b>Realisasi:</b> ${info?.realisasi || 0} Resp</p>
+                                                <p><b>Progres:</b> ${pStr}%</p>
                                             </div>
                                         </div>`).openPopup();
-                                    updateStyle();
-                                    e.target.setStyle({ weight: 3, color: '#333', fillOpacity: 0.7 }).bringToFront();
                                 }
                             });
                         }
@@ -412,82 +474,91 @@
             }
         });
 
-        // RESET AREA LAUT / KOSONG
+        // ACTION CLICK OUTSIDE MAP RESET PANEL & AUTO-CLOSE SIDEBAR
         map.on('click', () => { 
+            var sidebar = document.getElementById('sidebar');
+            var rightSidebar = document.getElementById('right-sidebar');
+            
+            if (rightSidebar.classList.contains('expanded')) return;
+            
             document.getElementById('selKec').value = "";
             document.getElementById('selDesa').innerHTML = '<option value="">Pilih Desa</option>';
-            map.closePopup(); updateStyle(); 
+            document.getElementById('sls-list').innerHTML = '';
+            document.getElementById('forceSLS').checked = false;
+            
+            if (sidebar.classList.contains('active')) sidebar.classList.remove('active');
+            if (rightSidebar.classList.contains('active')) closeDashboard();
+
+            map.closePopup(); 
+            updateStyle(); 
             map.setView([-1.88, 136.24], 11);
         });
 
-        function toggleBatas() { document.getElementById('chkRT').checked ? map.addLayer(batasLayer) : map.removeLayer(batasLayer); }
-
-        // NAVIGASI TOMBOL CYCLE (LOOPING)
         function navigateWilayah(dir) {
             var sKec = document.getElementById('selKec');
             var sDesa = document.getElementById('selDesa');
             
             if (sDesa.value !== "") {
-                var len = sDesa.options.length;
-                var idx = sDesa.selectedIndex;
+                var len = sDesa.options.length; var idx = sDesa.selectedIndex;
                 var next = dir === 'next' ? idx + 1 : idx - 1;
                 if(next >= len) next = 1; if(next < 1) next = len - 1;
                 sDesa.selectedIndex = next; onDropdownChange('desa');
             } else if (sKec.value !== "") {
-                var len = sKec.options.length;
-                var idx = sKec.selectedIndex;
+                var len = sKec.options.length; var idx = sKec.selectedIndex;
                 var next = dir === 'next' ? idx + 1 : idx - 1;
                 if(next >= len) next = 1; if(next < 1) next = len - 1;
                 sKec.selectedIndex = next; onDropdownChange('kec');
             }
         }
 
-        // HANDLER DROPDOWN MASTER
         function onDropdownChange(type, doZoom = true) {
             var kec = document.getElementById('selKec').value;
             var sDesa = document.getElementById('selDesa');
+            document.getElementById('sls-list').innerHTML = '';
             map.closePopup();
 
             if (type === 'kec') {
                 sDesa.innerHTML = '<option value="">Pilih Desa</option>';
                 if (kec) {
                     [...new Set(dataGlobal.filter(f => f.properties.nmkec == kec).map(f => f.properties.nmdesa))].sort().forEach(d => { if(d) sDesa.innerHTML += `<option value="${d}">${d}</option>`; });
-                    
                     if(doZoom) {
                         var feats = dataGlobal.filter(f => f.properties.nmkec == kec);
                         map.fitBounds(L.geoJSON(feats).getBounds(), { padding: [20, 20], animate: false });
                         
-                        // POPUP LEVEL KECAMATAN
-                        var d = aggrKec[kec];
-                        var avg = Math.round(d.totalP / d.count);
+                        var d = aggrKec[kec]; 
+                        var avgStr = (d.totalP / d.count).toFixed(1);
                         L.popup({ className: 'popup-custom' }).setLatLng(L.geoJSON(feats).getBounds().getCenter())
-                            .setContent(`<div class="popup-custom"><h4>Kec. ${kec}</h4><p><b>Jumlah Desa:</b> ${d.desas.size}</p><div class="highlight-data"><p><b>Total Target:</b> ${d.target} KK</p><p><b>Realisasi:</b> ${d.realisasi} KK</p><p><b>Rata Progres:</b> ${avg}%</p></div></div>`).openOn(map);
+                            .setContent(`<div class="popup-custom"><h4>Kec. ${kec}</h4><p><b>Jumlah Desa:</b> ${d.desas.size}</p><div class="highlight-data"><p><b>Total Target:</b> ${d.target} Resp</p><p><b>Realisasi:</b> ${d.realisasi} Resp</p><p><b>Rata Progres:</b> ${avgStr}%</p></div></div>`).openOn(map);
                     }
                 }
             } else if (type === 'desa') {
                 var desa = sDesa.value;
-                if (desa && doZoom) {
+                if (desa) {
                     var feats = dataGlobal.filter(f => f.properties.nmdesa == desa);
-                    map.fitBounds(L.geoJSON(feats).getBounds(), { animate: false });
+                    if(doZoom) map.fitBounds(L.geoJSON(feats).getBounds(), { animate: false });
                     
-                    // POPUP LEVEL DESA
-                    var key = kec + "||" + desa;
-                    var d = aggrDesa[key];
-                    var avg = Math.round(d.totalP / d.slsCount);
-                    L.popup({ className: 'popup-custom' }).setLatLng(L.geoJSON(feats).getBounds().getCenter())
-                        .setContent(`<div class="popup-custom"><h4>Desa ${desa}</h4><p><b>Jumlah SLS:</b> ${d.slsCount}</p><div class="highlight-data"><p><b>Total Target:</b> ${d.target} KK</p><p><b>Realisasi:</b> ${d.realisasi} KK</p><p><b>Rata Progres:</b> ${avg}%</p></div></div>`).openOn(map);
+                    var list = document.getElementById('sls-list');
+                    feats.forEach(x => {
+                        var div = document.createElement('div'); div.className = 'sls-item'; div.innerHTML = x.properties.nmsls;
+                        div.onclick = () => { map.fitBounds(L.geoJSON(x).getBounds(), { animate: false }); document.getElementById('sidebar').classList.remove('active'); };
+                        list.appendChild(div);
+                    });
+
+                    var key = kec + "||" + desa; 
+                    var d = aggrDesa[key]; 
+                    var avgStr = (d.totalP / d.slsCount).toFixed(1);
+                    if(doZoom) {
+                        L.popup({ className: 'popup-custom' }).setLatLng(L.geoJSON(feats).getBounds().getCenter())
+                            .setContent(`<div class="popup-custom"><h4>Desa ${desa}</h4><p><b>Jumlah SLS:</b> ${d.slsCount}</p><div class="highlight-data"><p><b>Total Target:</b> ${d.target} Resp</p><p><b>Realisasi:</b> ${d.realisasi} Resp</p><p><b>Rata Progres:</b> ${avgStr}%</p></div></div>`).openOn(map);
+                    }
                 }
             }
             updateStyle();
         }
 
-        // SINKRONISASI FORM DROPDOWN
         function syncForm(source) {
-            var gk = document.getElementById('selKec').value;
-            var gd = document.getElementById('selDesa').value;
-            var fk = document.getElementById('form-kec');
-            var fd = document.getElementById('form-desa');
-            var fs = document.getElementById('form-sls');
+            var gk = document.getElementById('selKec').value; var gd = document.getElementById('selDesa').value;
+            var fk = document.getElementById('form-kec'); var fd = document.getElementById('form-desa'); var fs = document.getElementById('form-sls');
 
             if(source === 'init') { fk.value = gk; syncForm('kec'); fd.value = gd; syncForm('desa'); }
             if(source === 'kec') {
