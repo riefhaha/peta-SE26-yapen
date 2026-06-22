@@ -20,15 +20,13 @@
         #map { width: 100vw; height: 100vh; z-index: 1; }
         
         /* SIDEBAR KIRI */
-        #sidebar { position: absolute; left: -320px; top: 0; width: 300px; height: 100%; background: #fff; z-index: 3000; transition: transform 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.15); overflow-y: auto; }
+        #sidebar { position: absolute; left: -320px; top: 0; width: 300px; height: 100%; background: #fff; z-index: 3000; transition: transform 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.15); overflow-y: auto; touch-action: pan-y; }
         #sidebar.active { transform: translateX(320px); }
         .header-gaspol { background: #f26522; color: #fff; padding: 45px 15px 20px 15px; text-align: center; position: relative; }
-        
-        /* LOGO CROP LINGKARAN */
         .logo-gaspol { width: 75px; height: 75px; object-fit: cover; object-position: center; border-radius: 50%; border: 3px solid #fff; margin: 0 auto 10px auto; display: block; box-shadow: 0 3px 6px rgba(0,0,0,0.2); background: white; }
         
         /* SIDEBAR KANAN */
-        #right-sidebar { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: #fff; z-index: 4000; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: -2px 0 10px rgba(0,0,0,0.15); overflow-x: hidden; overflow-y: auto; }
+        #right-sidebar { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: #fff; z-index: 4000; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: -2px 0 10px rgba(0,0,0,0.15); overflow-x: hidden; overflow-y: auto; touch-action: pan-y; }
         #right-sidebar.active { right: 0; }
         #right-sidebar.expanded { width: 100vw; right: 0; border-radius: 0; }
         
@@ -37,26 +35,26 @@
         #panel-dashboard, #panel-form { transition: opacity 0.3s ease; width: 100%; padding: 15px; box-sizing: border-box; }
         #panel-form { display: none; opacity: 0; }
 
-        /* KONTROL PANEL (BAWAH TENGAH) */
+        /* KONTROL PANEL UTAMA & ANTI-ZOOM CSS */
         .close-btn { position: absolute; top: 40px; right: 15px; background: rgba(0,0,0,0.2); border: none; color: #fff; padding: 5px 10px; cursor: pointer; border-radius: 4px; z-index: 10; font-weight: bold; }
         .close-btn.left { right: auto; left: 15px; }
-        .menu-btn { position: absolute; left: 10px; top: 50px; z-index: 2000; padding: 10px 15px; cursor: pointer; background: white; border: 1px solid #aaa; border-radius: 6px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .rekap-btn { position: absolute; right: 10px; top: 50px; z-index: 2000; padding: 10px 15px; cursor: pointer; background: #2ecc71; color: white; border: none; border-radius: 6px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .menu-btn { position: absolute; left: 10px; top: 50px; z-index: 2000; padding: 10px 15px; cursor: pointer; background: white; border: 1px solid #aaa; border-radius: 6px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); touch-action: manipulation; }
+        .rekap-btn { position: absolute; right: 10px; top: 50px; z-index: 2000; padding: 10px 15px; cursor: pointer; background: #2ecc71; color: white; border: none; border-radius: 6px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); touch-action: manipulation; }
         
-        .nav-control-panel { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2500; background: white; padding: 6px 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; }
-        .nav-panel-btn { background: #f26522; color: white; border: none; padding: 8px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+        .nav-control-panel { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2500; background: white; padding: 6px 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; touch-action: manipulation; }
+        .nav-panel-btn { background: #f26522; color: white; border: none; padding: 8px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; touch-action: manipulation; }
         .nav-panel-btn.zoom-btn { background: #34495e; padding: 8px 10px; }
         .nav-panel-btn:active { opacity: 0.8; }
         
-        .btn-action { width: 100%; padding: 12px; margin-top: 15px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-action { width: 100%; padding: 12px; margin-top: 15px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; touch-action: manipulation; }
         .btn-cancel { background: #e74c3c; margin-top: 10px; }
 
         /* FORM CONTROLS */
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #555; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; touch-action: manipulation; }
         .nav-content { padding: 15px; }
-        .select-box { width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .select-box { width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; touch-action: manipulation; }
         .sls-item { cursor: pointer; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
         .sls-item:hover { background: #f0f8ff; color: #007bff; }
         
@@ -72,7 +70,7 @@
         
         /* INFOGRAFIS LABEL */
         .custom-div-icon { background: transparent; border: none; }
-        .infografis-label { background: rgba(255,255,255,0.95); border: 1px solid #f26522; font-weight: bold; font-size: 11px; padding: 4px 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.3); border-radius: 4px; color: #333; text-align: center; white-space: nowrap; transform: translate(-50%, -50%); display: inline-block;}
+        .infografis-label { background: rgba(255,255,255,0.95); border: 1px solid #f26522; font-weight: bold; font-size: 11px; padding: 4px 6px; box-shadow: 1px 1px 3px rgba(0,0,0,0.3); border-radius: 4px; color: #333; text-align: center; white-space: nowrap; transform: translate(-50%, -50%); display: inline-block; pointer-events: none; }
         .my-tooltip { background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 4px; font-size: 12px; padding: 4px 8px; pointer-events: none;}
 
         /* ACCORDION TREE TABLE DASHBOARD */
@@ -109,8 +107,8 @@
             <label><input type="checkbox" id="forceSLS" onchange="updateStyle()"> <b>Paksa Tampilkan Level SLS</b></label>
             <hr>
             <label><b>Mode Tampilan:</b></label><br>
-            <input type="radio" name="mode" value="bebas" checked onchange="updateStyle()"> Mode Bebas<br>
-            <input type="radio" name="mode" value="infografis" onchange="updateStyle()"> Mode Infografis
+            <input type="radio" name="mode" value="bebas" onchange="updateStyle()"> Mode Bebas<br>
+            <input type="radio" name="mode" value="infografis" checked onchange="updateStyle()"> Mode Infografis
             <hr>
             <select id="selKec" class="select-box" onchange="onDropdownChange('kec')"><option value="">Pilih Kecamatan</option></select>
             <select id="selDesa" class="select-box" onchange="onDropdownChange('desa')"><option value="">Pilih Desa</option></select>
@@ -285,7 +283,7 @@
             return 'kecamatan';
         }
 
-        // --- SISTEM DECLUTTERING (ANTI-KOLISI LABEL VISUAL DENGAN TOLERANSI LEBIH LEBAR) ---
+        // --- SISTEM DECLUTTERING (ANTI-KOLISI LABEL VISUAL) ---
         function renderLabels() {
             infoLabels.clearLayers();
             var mode = document.querySelector('input[name="mode"]:checked').value;
@@ -342,7 +340,7 @@
         }
         map.on('moveend zoomend', renderLabels);
 
-        // PENYESUAIAN WARNA GARIS BATAS SPASIAL & TRANSAKSI OPASITAS WILKERSTAT
+        // PENYESUAIAN WARNA GARIS BATAS SPASIAL IKUTI HIERARKI WILKERSTAT
         function updateStyle() {
             if(!geoLayer) return;
             var mode = document.querySelector('input[name="mode"]:checked').value;
@@ -432,7 +430,7 @@
                                     var list = document.getElementById('sls-list'); list.innerHTML = '';
                                     dataGlobal.filter(x => x.properties.nmdesa == desa).forEach(x => {
                                         var div = document.createElement('div'); div.className = 'sls-item'; div.innerHTML = x.properties.nmsls;
-                                        div.onclick = () => { map.fitBounds(L.geoJSON(x).getBounds(), { animate: false }); document.getElementById('sidebar').classList.remove('active'); };
+                                        div.onclick = () => { map.flyToBounds(L.geoJSON(x).getBounds(), { padding: [20, 20], duration: 0.8 }); document.getElementById('sidebar').classList.remove('active'); };
                                         list.appendChild(div);
                                     });
 
@@ -474,24 +472,38 @@
             }
         });
 
-        // ACTION CLICK OUTSIDE MAP RESET PANEL & AUTO-CLOSE SIDEBAR
-        map.on('click', () => { 
+        // ACTION CLICK OUTSIDE MAP (STEP-BACK TERARAH BERTAHAP)
+        map.on('click', function(e) { 
             var sidebar = document.getElementById('sidebar');
             var rightSidebar = document.getElementById('right-sidebar');
             
             if (rightSidebar.classList.contains('expanded')) return;
-            
-            document.getElementById('selKec').value = "";
-            document.getElementById('selDesa').innerHTML = '<option value="">Pilih Desa</option>';
-            document.getElementById('sls-list').innerHTML = '';
-            document.getElementById('forceSLS').checked = false;
-            
             if (sidebar.classList.contains('active')) sidebar.classList.remove('active');
             if (rightSidebar.classList.contains('active')) closeDashboard();
 
-            map.closePopup(); 
-            updateStyle(); 
-            map.setView([-1.88, 136.24], 11);
+            var sKec = document.getElementById('selKec');
+            var sDesa = document.getElementById('selDesa');
+            var kecVal = sKec.value;
+            var desaVal = sDesa.value;
+
+            if (desaVal !== "") {
+                sDesa.value = ""; 
+                document.getElementById('sls-list').innerHTML = '';
+                onDropdownChange('kec', true); 
+                map.closePopup();
+            } 
+            else if (kecVal !== "") {
+                sKec.value = ""; 
+                sDesa.innerHTML = '<option value="">Pilih Desa</option>';
+                document.getElementById('sls-list').innerHTML = '';
+                document.getElementById('forceSLS').checked = false;
+                updateStyle(); 
+                map.closePopup();
+                map.flyTo([-1.88, 136.24], 11, { duration: 1.2 }); 
+            }
+            else {
+                map.closePopup();
+            }
         });
 
         function navigateWilayah(dir) {
@@ -523,7 +535,7 @@
                     [...new Set(dataGlobal.filter(f => f.properties.nmkec == kec).map(f => f.properties.nmdesa))].sort().forEach(d => { if(d) sDesa.innerHTML += `<option value="${d}">${d}</option>`; });
                     if(doZoom) {
                         var feats = dataGlobal.filter(f => f.properties.nmkec == kec);
-                        map.fitBounds(L.geoJSON(feats).getBounds(), { padding: [20, 20], animate: false });
+                        map.flyToBounds(L.geoJSON(feats).getBounds(), { padding: [20, 20], duration: 0.8 });
                         
                         var d = aggrKec[kec]; 
                         var avgStr = (d.totalP / d.count).toFixed(1);
@@ -535,12 +547,12 @@
                 var desa = sDesa.value;
                 if (desa) {
                     var feats = dataGlobal.filter(f => f.properties.nmdesa == desa);
-                    if(doZoom) map.fitBounds(L.geoJSON(feats).getBounds(), { animate: false });
+                    if(doZoom) map.flyToBounds(L.geoJSON(feats).getBounds(), { padding: [20, 20], duration: 0.8 });
                     
                     var list = document.getElementById('sls-list');
                     feats.forEach(x => {
                         var div = document.createElement('div'); div.className = 'sls-item'; div.innerHTML = x.properties.nmsls;
-                        div.onclick = () => { map.fitBounds(L.geoJSON(x).getBounds(), { animate: false }); document.getElementById('sidebar').classList.remove('active'); };
+                        div.onclick = () => { map.flyToBounds(L.geoJSON(x).getBounds(), { padding: [20, 20], duration: 0.8 }); document.getElementById('sidebar').classList.remove('active'); };
                         list.appendChild(div);
                     });
 
@@ -570,6 +582,23 @@
                 if(fd.value) dataGlobal.filter(f => f.properties.nmdesa == fd.value).sort((a,b)=>a.properties.nmsls.localeCompare(b.properties.nmsls)).forEach(f => { fs.innerHTML += `<option value="${f.properties.idsubsls.trim()}">${f.properties.nmsls}</option>`; });
             }
         }
+        
+        function toggleBatas() { document.getElementById('chkRT').checked ? map.addLayer(batasLayer) : map.removeLayer(batasLayer); }
+
+        // MENCEGAH PINCH-ZOOM NATIVE BROWSER (KHUSUS IOS/SAFARI)
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Mencegah zoom akibat double-tap cepat di layar (opsional, pengaman ganda)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            let now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
